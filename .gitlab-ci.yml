@@ -1,0 +1,17 @@
+stages:
+  - build
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build --pull -t "$CI_REGISTRY/wasabi_report:latest" -t "$CI_REGISTRY/wasabi_report:master-$CI_COMMIT_SHORT_SHA" .
+    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock "$CI_REGISTRY/aqua-scanner:5.0" scan --local "$CI_REGISTRY/wasabi_report:latest" --host https://aqua.uksouth.bink.sh:30001/ --user scanner --password $AQUA_PASSWORD --show-negligible --policies Bink --text
+    - docker push "$CI_REGISTRY/wasabi_report:latest"
+    - docker push "$CI_REGISTRY/wasabi_report:master-$CI_COMMIT_SHORT_SHA"
+  only:
+    - master

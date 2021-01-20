@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+azure-storage-blob = "*"
+requests = "*"
+apscheduler = "*"
+azure-keyvault-secrets = "*"
+azure-identity = "*"
+
+[dev-packages]
+isort = "*"
+black = "*"
+flake8 = "*"
+
+[requires]
+python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true
