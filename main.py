@@ -14,13 +14,14 @@ from azure.storage.blob import ContainerClient
 
 logger = logging.getLogger("report")
 
-EMAILS = ("tcain@bink.com",)
+EMAILS = ("ajones@bink.com",)
+DISABLE_ENV_CRED = os.getenv("DISABLE_ENV_CRED", "true") == "true"
 
 
 def send_email(subject: str, text: str):
-    kvclient = SecretClient(
-        vault_url="https://bink-uksouth-prod-com.vault.azure.net/", credential=DefaultAzureCredential()
-    )
+    # Disabling env cred hides usless azure warning
+    cred = DefaultAzureCredential(exclude_environment_credential=DISABLE_ENV_CRED)
+    kvclient = SecretClient(vault_url="https://bink-uksouth-prod-com.vault.azure.net/", credential=cred)
 
     mailgun_secret = json.loads(kvclient.get_secret("mailgun").value)
     mailgun_api_key = mailgun_secret["MAILGUN_API_KEY"]
