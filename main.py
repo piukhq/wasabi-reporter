@@ -33,7 +33,7 @@ def send_email(subject: str, text: str):
         resp = requests.post(
             f"{mailgun_api}/{mailgun_domain}/messages",
             auth=("api", mailgun_api_key),
-            data={"from": "Bink Support <support@bink.com>", "to": email, "subject": subject, "text": text},
+            data={"from": "Wasabi Report <wasabireport@bink.com>", "to": email, "subject": subject, "text": text},
         )
         if resp.status_code != 200:
             logger.warning(f"mailgun status code expected 200 got {resp.status_code}")
