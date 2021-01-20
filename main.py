@@ -14,7 +14,7 @@ from azure.storage.blob import ContainerClient
 
 logger = logging.getLogger("report")
 
-EMAILS = ("ajones@bink.com",)
+EMAILS = ("ajones@bink.com", "operations@bink.com")
 DISABLE_ENV_CRED = os.getenv("DISABLE_ENV_CRED", "true") == "true"
 
 
