@@ -1,4 +1,4 @@
-FROM binkhq/python:3.8
+FROM ghcr.io/binkhq/python:3.8
 
 WORKDIR /app
 ADD . .
