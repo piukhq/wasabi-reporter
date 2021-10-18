@@ -9,6 +9,7 @@ requests = "*"
 apscheduler = "*"
 azure-keyvault-secrets = "*"
 azure-identity = "*"
+redis = "*"
 
 [dev-packages]
 isort = "*"
