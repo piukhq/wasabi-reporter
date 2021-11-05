@@ -13,11 +13,9 @@ redis = "*"
 
 [dev-packages]
 isort = "*"
-black = "*"
+black = "==21.10b0"
 flake8 = "*"
+ptpython = "*"
 
 [requires]
 python_version = "3.9"
-
-[pipenv]
-allow_prereleases = true

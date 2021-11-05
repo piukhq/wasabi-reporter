@@ -1,3 +1,3 @@
-# wasabu_report
+# wasabi-report
 
 Sends report about wasabi files

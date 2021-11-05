@@ -4,9 +4,9 @@ import datetime
 import json
 import logging
 import os
-import redis
 import socket
 
+import redis
 import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -20,6 +20,7 @@ EMAILS = ("ajones@bink.com", "operations@bink.com", "sarmstrong@bink.com")
 DISABLE_ENV_CRED = os.getenv("DISABLE_ENV_CRED", "true") == "true"
 
 redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
+
 
 def is_leader():
     r = redis.Redis.from_url(redis_url)
