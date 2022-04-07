@@ -16,7 +16,7 @@ from azure.storage.blob import ContainerClient
 
 logger = logging.getLogger("report")
 
-EMAILS = ("ajones@bink.com", "operations@bink.com", "sarmstrong@bink.com")
+EMAILS = ("ajones@bink.com", "operations@bink.com", "sarmstrong@bink.com", "dpayton@bink.com")
 DISABLE_ENV_CRED = os.getenv("DISABLE_ENV_CRED", "true") == "true"
 
 redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
