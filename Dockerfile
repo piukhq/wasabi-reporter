@@ -1,9 +1,13 @@
-FROM ghcr.io/binkhq/python:3.9
+FROM ghcr.io/binkhq/python:3.10-poetry as build
+WORKDIR /src
+ADD . .
+RUN poetry build
+
+FROM ghcr.io/binkhq/python:3.10
 
 WORKDIR /app
-ADD . .
-
-RUN pipenv install --system --deploy --ignore-pipfile
+COPY --from=build /src/dist/*.whl .
+RUN pip install *.whl && rm *.whl
 
 ENTRYPOINT [ "linkerd-await", "--" ]
-CMD [ "python", "main.py" ]
+CMD [ "/usr/local/bin/wasabi_reporter" ]

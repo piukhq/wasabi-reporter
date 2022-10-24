@@ -13,10 +13,11 @@ from apscheduler.triggers.cron import CronTrigger
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import ContainerClient
+from pythonjsonlogger import jsonlogger
 
 logger = logging.getLogger("report")
 
-EMAILS = ("ajones@bink.com", "operations@bink.com", "sarmstrong@bink.com", "dpayton@bink.com")
+EMAILS = ("ajones@bink.com", "operations@bink.com", "sarmstrong@bink.com", "dpayton@bink.com", "devops@bink.com")
 DISABLE_ENV_CRED = os.getenv("DISABLE_ENV_CRED", "true") == "true"
 
 redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
@@ -53,23 +54,23 @@ def send_email(subject: str, text: str):
     mailgun_domain = mailgun_secret["MAILGUN_DOMAIN"]
 
     for email in EMAILS:
-        logger.info(f"Sending email to {email}")
+        logging.info(f"Sending email to {email}")
         resp = requests.post(
             f"{mailgun_api}/{mailgun_domain}/messages",
             auth=("api", mailgun_api_key),
             data={"from": "Wasabi Report <wasabireport@bink.com>", "to": email, "subject": subject, "text": text},
         )
         if resp.status_code != 200:
-            logger.warning(f"mailgun status code expected 200 got {resp.status_code}")
+            logging.warning(f"mailgun status code expected 200 got {resp.status_code}")
 
 
 def run():
     if is_leader():
-        logger.info("Getting Wasabi rollup file")
+        logging.info("Getting Wasabi rollup file")
 
         connection_string = os.getenv("BLOB_CONNECTION_STRING")
         if not connection_string:
-            logger.error("No blob storage connection string")
+            logging.error("No blob storage connection string")
             return
 
         with ContainerClient.from_connection_string(
@@ -82,7 +83,7 @@ def run():
 
             email_body = f"File for {formatted_date} not found"
             for file in container_client.list_blobs(name_starts_with=file_prefix):
-                logger.info("Found file")
+                logging.info("Found file", extra={"filename": file})
                 blob = container_client.get_blob_client(file.name)
                 data = blob.download_blob().readall().decode()
 
@@ -95,19 +96,18 @@ def run():
                 email_body = f"Founds dates: {', '.join(dates)}"
                 break
             else:
-                logger.info("Did not find file")
+                logging.info("Did not find file")
 
+            logging.warning("Sending email", extra={"E-Mail Subject": subject, "E-Mail Body": email_body})
             send_email(subject, email_body)
 
 
 def main():
-    root_logger = logging.getLogger()
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s %(name)-12s %(levelname)-8s %(message)s")
-    handler.setFormatter(formatter)
-    root_logger.addHandler(handler)
-    root_logger.setLevel(logging.INFO)
-    logger.setLevel(logging.INFO)
+    logger = logging.getLogger()
+    logHandler = logging.StreamHandler()
+    logFmt = jsonlogger.JsonFormatter(timestamp=True)
+    logHandler.setFormatter(logFmt)
+    logger.addHandler(logHandler)
 
     for logger_name in ("azure",):
         logging.getLogger(logger_name).setLevel(logging.WARNING)
@@ -117,9 +117,10 @@ def main():
 
     args = parser.parse_args()
     if args.now:
+        logging.warning(msg="Running Wasabi Reporter now")
         run()
     else:
-        logger.info("Starting scheduler")
+        logging.warning(msg="Starting Wasabi Reporter...")
         scheduler = BlockingScheduler()
         scheduler.add_job(run, CronTrigger.from_crontab("0 7 * * *"))
         scheduler.start()
