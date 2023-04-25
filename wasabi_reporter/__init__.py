@@ -46,7 +46,7 @@ def is_leader():
 def send_email(subject: str, text: str):
     # Disabling env cred hides usless azure warning
     cred = DefaultAzureCredential(exclude_environment_credential=DISABLE_ENV_CRED)
-    kvclient = SecretClient(vault_url="https://bink-uksouth-prod-com.vault.azure.net/", credential=cred)
+    kvclient = SecretClient(vault_url="https://uksouth-prod-qj46.vault.azure.net/", credential=cred)
 
     mailgun_secret = json.loads(kvclient.get_secret("mailgun").value)
     mailgun_api_key = mailgun_secret["MAILGUN_API_KEY"]
