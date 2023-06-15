@@ -12,7 +12,7 @@ wasabi_reporter = "wasabi_reporter:main"
 [tool.poetry.dependencies]
 python = "^3.10"
 azure-storage-blob = "^12.14.1"
-requests = "^2.28.1"
+requests = "^2.31.0"
 APScheduler = "^3.9.1"
 azure-keyvault-secrets = "^4.6.0"
 azure-identity = "^1.11.0"
